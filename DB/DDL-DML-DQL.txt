@@ -1,0 +1,37 @@
+-- 創建樓層座位表與員工資料表
+CREATE TABLE SeatingChart (
+    FLOOR_SEAT_SEQ INT PRIMARY KEY AUTO_INCREMENT COMMENT '樓層座位序列編號',
+    FLOOR_NO INT COMMENT '樓層號碼',
+    SEAT_NO INT COMMENT '座位號碼'
+) COMMENT '樓層座位表';
+
+CREATE TABLE Employee (
+    EMP_ID INT PRIMARY KEY COMMENT '員工編號',
+    NAME VARCHAR(10) NOT NULL COMMENT '員工姓名',
+    EMAIL VARCHAR(50) COMMENT '員工郵件',
+    FLOOR_SEAT_SEQ INT UNIQUE COMMENT '座位資訊',
+    FOREIGN KEY (FLOOR_SEAT_SEQ) REFERENCES SeatingChart(FLOOR_SEAT_SEQ) ON UPDATE CASCADE ON DELETE SET NULL
+) COMMENT '員工資料表';
+
+
+-- 插入員工資料(ex:5位員工)
+INSERT INTO Employee(EMP_ID,NAME,EMAIL) VALUES (11001,'小王','a001@gmail.com'),(11002,'小美','b0002@gmail.com'),
+(11003,'小陳','c00003@gmail.com'),(11004,'小周','d04@gmail.com'),(11005,'小黃','e005@gmail.com');
+
+-- 插入樓層座位資料(ex:有4層樓每層4個位置共16個座位)
+INSERT INTO SeatingChart(FLOOR_NO,SEAT_NO) VALUES (1,1),(1,2),(1,3),(1,4),(2,1),(2,2),(2,3),(2,4),
+(3,1),(3,2),(3,3),(3,4),(4,1),(4,2),(4,3),(4,4);
+
+-- 員工選擇位置(ex:將員工編號為11005的員工座位資訊更新為座位序號1)
+UPDATE Employee SET FLOOR_SEAT_SEQ = 1 WHERE EMP_ID = 11005;
+
+-- 清除座位為空位(ex:清除第1層樓第1個位置為空位)
+UPDATE Employee E , SeatingChart S SET E.FLOOR_SEAT_SEQ = NULL 
+WHERE E.FLOOR_SEAT_SEQ = S.FLOOR_SEAT_SEQ && 
+S.FLOOR_NO = 1 && S.SEAT_NO = 1;
+
+-- 顯示所有擁有座位的員工資料以及對應的座位訊息(不顯示沒座位的員工)
+SELECT E.EMP_ID , E.NAME , E.EMAIL , S.FLOOR_NO , S.SEAT_NO FROM Employee E , SeatingChart S WHERE E.FLOOR_SEAT_SEQ = S.FLOOR_SEAT_SEQ;
+
+-- 顯示所有員工資料和對應的座位訊息(也會顯示沒座位的員工)
+SELECT E.EMP_ID , E.NAME , E.EMAIL , S.FLOOR_NO , S.SEAT_NO FROM Employee E LEFT OUTER JOIN SeatingChart S ON E.FLOOR_SEAT_SEQ = S.FLOOR_SEAT_SEQ;
