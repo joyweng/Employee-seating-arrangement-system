@@ -1,0 +1,23 @@
+/* styles.css */
+
+.seat-row {
+  display: flex;
+}
+
+.seat-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-right: 10px;
+  margin-bottom: 10px;
+}
+
+.square {
+  width: 50px;
+  height: 50px;
+  margin-bottom: 5px;
+}
+
+select {
+  width: 100px;
+}
